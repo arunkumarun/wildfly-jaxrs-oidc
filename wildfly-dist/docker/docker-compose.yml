@@ -1,0 +1,74 @@
+networks:
+  wildfly_oidc:
+    name: wildfly_oidc
+
+volumes:
+  wildfly_oidc_data:
+    name: wildfly_oidc_data
+
+services:
+  auth_db:
+    image: postgres:15.5-bullseye
+    container_name: auth_db
+    environment:
+      - POSTGRES_DB=auth_keycloak_db
+      - POSTGRES_USER=keycloak_user
+      - POSTGRES_PASSWORD=keycloak_user
+    ports:
+      - 5432:5432
+    networks:
+      - wildfly_oidc
+    volumes:
+      - wildfly_oidc_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth_server:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: auth_server
+    command:
+      - start-dev
+    depends_on:
+      auth_db:
+        condition: service_healthy
+    networks:
+      - wildfly_oidc
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_HOSTNAME_URL=http://auth_server:8180
+      - KC_HOSTNAME_ADMIN_URL=http://auth_server:8180
+#      - KC_HOSTNAME=${AUTH_HOST}
+#      - KC_HOSTNAME_ADMIN=${AUTH_HOST}
+      - KC_HOSTNAME_STRICT_BACKCHANNEL=true
+      - KC_HTTP_PORT=8180
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://auth_db:5432/auth_keycloak_db
+      - KC_DB_USERNAME=keycloak_user
+      - KC_DB_PASSWORD=keycloak_user
+    ports:
+      - 8180:8180
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://auth_server:8180/admin"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  resource_server:
+    build:
+      context: ../
+      dockerfile: docker/resource/Dockerfile
+    image: resource_server
+    container_name: resource_server
+    depends_on:
+      - auth_db
+      - auth_server
+    networks:
+      - wildfly_oidc
+    ports:
+      - 9990:9990
+      - 8080:8080
+

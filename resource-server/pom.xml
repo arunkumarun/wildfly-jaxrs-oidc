@@ -92,7 +92,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>../wildfly-dist/deployments</outputDirectory>
+                            <outputDirectory>../wildfly-dist/docker/resource/deployments</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>target</directory>

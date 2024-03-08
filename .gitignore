@@ -111,5 +111,5 @@ fabric.properties
 ### Project ###
 **/target
 
-wildfly-dist/deployments/**.war
-!wildfly-dist/deployments/**.md
+wildfly-dist/docker/resource/deployments/**.war
+!wildfly-dist/docker/resource/deployments/**.md
