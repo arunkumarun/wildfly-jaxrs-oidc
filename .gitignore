@@ -107,3 +107,9 @@ fabric.properties
 .idea/**/azureSettings.xml
 
 ### End Intellij ###
+
+### Project ###
+**/target
+
+wildfly-dist/deployments/**.war
+!wildfly-dist/deployments/**.md
