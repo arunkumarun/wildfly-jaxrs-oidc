@@ -1,0 +1,6 @@
+{
+  "client-id" : "resource-client",
+  "provider-url" : "http://auth_server:8180/realms/wildfly",
+  "ssl-required" : "EXTERNAL",
+  "bearer-only" : "true"
+}

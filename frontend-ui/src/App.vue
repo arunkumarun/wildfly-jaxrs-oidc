@@ -1,9 +1,12 @@
 <template>
-  <HelloWorld msg="Hello World" />
+  <v-app>
+    <v-container fluid>
+      <router-view></router-view>
+    </v-container>
+  </v-app>
 </template>
 
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <style scoped>
