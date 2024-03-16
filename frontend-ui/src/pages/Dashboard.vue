@@ -126,7 +126,12 @@ async function fetchAdminMessage() {
       errorMessage.value = 'Error in fetching the admin message' + response.statusText;
     }
   } else {
-    errorMessage.value = ('User not Logged In. Login to fetch the admin message');
+    const response = await axios.get('/api/admin');
+    if (response.status === 200) {
+      secretMessage.value = response.data;
+    } else {
+      errorMessage.value = 'Error in fetching the admin message' + response.statusText;
+    }
   }
 }
 
